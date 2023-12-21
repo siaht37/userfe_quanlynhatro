@@ -13,8 +13,6 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
-
 // react-router-dom components
 import { Link } from "react-router-dom";
 
@@ -45,10 +43,24 @@ import routes from "routes";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
-function SignInBasic() {
+import { useCallback, useState } from "react";
+import { login } from '../../../apis'
+
+export default function SignInBasic() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = useCallback(async () => {
+    const response = await login(username, password);
+    if(response.maRole === 1){
+      window.location = "http://localhost:3000"
+    }else{
+      window.location = "http://localhost:3001/pages/landing-pages/about-us?" + response.username
+    }
+  }, [username, password]);
 
   return (
     <>
@@ -120,10 +132,20 @@ function SignInBasic() {
               <MKBox pt={4} pb={3} px={3}>
                 <MKBox component="form" role="form">
                   <MKBox mb={2}>
-                    <MKInput type="email" label="Email" fullWidth />
+                    <MKInput
+                      onChange={(e) => setUsername(e.target.value)}
+                      type="text"
+                      label="Username"
+                      fullWidth
+                    />
                   </MKBox>
                   <MKBox mb={2}>
-                    <MKInput type="password" label="Password" fullWidth />
+                    <MKInput
+                      onChange={(e) => setPassword(e.target.value)}
+                      type="password"
+                      label="Password"
+                      fullWidth
+                    />
                   </MKBox>
                   <MKBox display="flex" alignItems="center" ml={-1}>
                     <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -138,7 +160,7 @@ function SignInBasic() {
                     </MKTypography>
                   </MKBox>
                   <MKBox mt={4} mb={1}>
-                    <MKButton variant="gradient" color="info" fullWidth>
+                    <MKButton onClick={handleLogin} variant="gradient" color="info" fullWidth>
                       sign in
                     </MKButton>
                   </MKBox>
@@ -169,5 +191,3 @@ function SignInBasic() {
     </>
   );
 }
-
-export default SignInBasic;

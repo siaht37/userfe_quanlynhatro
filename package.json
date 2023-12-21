@@ -14,6 +14,7 @@
     "url": "git+https://github.com/creativetimofficial/ct-material-kit-react.git"
   },
   "dependencies": {
+    "@chakra-ui/react": "1.8.8",
     "@emotion/cache": "11.10.7",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
@@ -26,6 +27,7 @@
     "axios": "^1.6.2",
     "chroma-js": "2.4.2",
     "flatpickr": "4.6.13",
+    "framer-motion": "^10.16.16",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-copy-to-clipboard": "5.1.0",

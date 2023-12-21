@@ -16,6 +16,7 @@ Coded by www.creative-tim.com
 // @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
@@ -23,21 +24,38 @@ import MKBox from "components/MKBox";
 // Material Kit 2 React examples
 import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
 import CenteredBlogCard from "examples/Cards/BlogCards/CenteredBlogCard";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useCallback } from "react";
 import { HoaDonHangThang } from "../../../../apis";
 import Button from "@mui/material/Button";
+import ChiTietHoaDon from "components/ChiTietHoaDon/ChiTietHoaDon";
 
 function Information() {
   const [hoaDonHangThangs, setHoaDonHangThangs] = useState([]);
+  const [maHoaDon, setMaHoaDon] = useState();
+
   useEffect(() => {
     const fetchData = async () => {
-      const data = await HoaDonHangThang.getHoaDonHangThangByUsername("user1");
-      setHoaDonHangThangs(data);
+      const url = window.location.href;
+      if (url.split("?")[1]) {
+        const data = await HoaDonHangThang.getHoaDonHangThangByUsername(url.split("?")[1]);
+        setHoaDonHangThangs(data);
+      }
     };
     fetchData();
   }, []);
 
-  return (
+  const handleDetail = useCallback((hoaDon) => {
+    setMaHoaDon(hoaDon);
+  }, []);
+
+  const handlePayment = useCallback((hoaDon) => {
+    window.location = `${process.env.REACT_APP_QUAN_LY_NHA_TRO}/api/payment/pay/${hoaDon.maHoaDonHangThang}`;
+    console.log();
+  }, []);
+
+  return maHoaDon ? (
+    <ChiTietHoaDon maHoaDon={maHoaDon} />
+  ) : (
     <MKBox component="section" py={12}>
       <Container>
         <Grid container spacing={3} alignItems="center">
@@ -57,6 +75,7 @@ function Information() {
               {hoaDonHangThangs.map((hoaDon) => (
                 <Fragment key={hoaDon.maHoaDonHangThang}>
                   <Grid
+                    position={"relative"}
                     sx={{
                       boxShadow: 3,
                       width: "8rem",
@@ -79,9 +98,33 @@ function Information() {
                         title={`Hóa đơn tháng ${new Date(hoaDon.ngayLap).getMonth() + 1}`}
                       />
                     </MKBox>
+
+                    <Box
+                      position={"absolute"}
+                      top={0}
+                      right={0}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        p: 1,
+                        m: 1,
+                        bgcolor: "background.paper",
+                        borderRadius: 1,
+                      }}
+                    >
+                      <Button
+                        onClick={() => {
+                          setMaHoaDon(hoaDon.maHoaDonHangThang);
+                        }}
+                        style={{ fontSize: 15, color: "black" }}
+                      >
+                        Xem chi tiết
+                      </Button>
+                    </Box>
                   </Grid>
                   {!hoaDon.trangThaiThanhToan ? (
                     <Button
+                      onClick={() => handlePayment(hoaDon)}
                       style={{ padding: 24, fontSize: 17, color: "white" }}
                       variant="contained"
                     >
